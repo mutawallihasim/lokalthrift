@@ -5,6 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar LokalThrift</title>
 
+  <?php
+
+session_start(); 
+require 'connection.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama_lengkap = $_POST['nama_lengkap'];
+    $email = $_POST['email'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $konfirmasi_password = $_POST['konfirmasi_password'];
+    $role = $_POST['role'];
+
+    if ($password === $konfirmasi_password) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        
+        $query = "INSERT INTO pengguna (nama_lengkap, email, username, password, role) 
+                  VALUES ('$nama_lengkap', '$email', '$username', '$hashed_password', '$role')";
+        
+        if (mysqli_query($conn, $query)) {
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $role;
+            echo "<script>alert('Pendaftaran berhasil! Mengalihkan ke Dashboard...'); window.location.href='dashboard.php';</script>";
+            exit;
+        } else {
+            echo "<script>alert('Gagal mendaftar: Pastikan username/email belum digunakan.');</script>";
+        }
+    } else {
+        echo "<script>alert('Error: Konfirmasi password tidak cocok!');</script>";
+    }
+}
+?>
+
   <style>
 
     *{
@@ -102,7 +135,7 @@
 
   <h2>Daftar Akun</h2>
 
-  <form action="login.html">
+  <form action="login.php">
 
     <input type="text" placeholder="Nama Lengkap" required>
 
@@ -126,7 +159,7 @@
 
   <div class="login-link">
     Sudah punya akun?
-    <a href="login.html">Login</a>
+    <a href="login.php">Login</a>
   </div>
 
 </div>

@@ -98,7 +98,7 @@
 
   <h2>Login</h2>
 
-  <form action="dashboard.html">
+  <form action="dashboard.php">
     <input type="text" placeholder="Email / Username" required>
     
     <input type="password" placeholder="Password" required>
