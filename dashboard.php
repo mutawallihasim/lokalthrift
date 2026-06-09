@@ -103,6 +103,12 @@
       white-space: nowrap;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+
+    .kategori .item:hover {
+      background: #2a85ff;
+      color: white;
     }
 
     /* BANNER */
@@ -212,28 +218,39 @@
       gap: 20px;
     }
 
+    /* KARTU PRODUK SEBAGAI LINK */
     .card-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
+      text-decoration: none; 
+      color: inherit; 
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .card-item:hover {
+      transform: translateY(-5px);
     }
 
     .img-wrapper {
       width: 100%;
       background: #f7f9fa;
       border-radius: 16px;
-      padding: 15px;
+      padding: 0; /* Diubah jadi 0 agar gambar memenuhi kotak abu-abu */
       display: flex;
       justify-content: center;
       align-items: center;
       aspect-ratio: 1 / 1;
+      overflow: hidden; /* Memastikan sudut gambar terpotong rapi */
     }
 
+    /* MEMBUAT UKURAN GAMBAR RATA DAN KONSISTEN */
     .card-item img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Gambar dipotong otomatis secara proporsional agar tidak gepeng */
     }
 
     .card-item .item-name {
@@ -274,16 +291,25 @@
       text-align: center;
       font-size: 14px;
       font-weight: bold;
-      color: #000;
+      color: #000; 
+      text-decoration: none; 
       cursor: pointer;
       flex: 1;
-      text-decoration: none;
+      transition: color 0.2s;
     }
 
     .nav-item i {
       font-size: 22px;
       margin-bottom: 6px;
       display: inline-block;
+    }
+
+    .nav-item:hover {
+      color: #2a85ff;
+    }
+
+    .nav-item.active {
+      color: #000;
     }
 
     @media (max-width: 768px) {
@@ -298,7 +324,7 @@
 <div class="dashboard">
 
   <div class="header">
-    <div class="title">Selamat Datang</div>
+    <div class="title">Selamat Datang di LokalThrift</div>
     <div class="notif-btn"><i class="fa-regular fa-bell"></i></div>
   </div>
 
@@ -334,29 +360,29 @@
       <div class="block-title">Produk Terbaru</div>
       <div class="grid-produk">
         
-        <div class="card-item">
+        <a href="detail.php?id=1" class="card-item">
           <div class="img-wrapper">
             <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200" alt="Produk 1">
           </div>
           <div class="item-name">nama</div>
           <div class="item-price">Rp150.000</div>
-        </div>
+        </a>
 
-        <div class="card-item">
+        <a href="detail.php?id=2" class="card-item">
           <div class="img-wrapper">
             <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200" alt="Produk 2">
           </div>
           <div class="item-name">nama</div>
           <div class="item-price">Rp75.000</div>
-        </div>
+        </a>
 
-        <div class="card-item">
+        <a href="detail.php?id=3" class="card-item">
           <div class="img-wrapper">
             <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=200" alt="Produk 3">
           </div>
           <div class="item-name">nama</div>
           <div class="item-price">Rp50.000</div>
-        </div>
+        </a>
 
       </div>
     </div>
@@ -365,29 +391,29 @@
       <div class="block-title">Rekomendasi</div>
       <div class="grid-produk">
         
-        <div class="card-item">
+        <a href="detail.php?id=4" class="card-item">
           <div class="img-wrapper">
             <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200" alt="Produk 4">
           </div>
           <div class="item-name">nama</div>
           <div class="item-price">Rp120.000</div>
-        </div>
+        </a>
 
-        <div class="card-item">
+        <a href="detail.php?id=5" class="card-item">
           <div class="img-wrapper">
             <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200" alt="Produk 5">
           </div>
           <div class="item-name">nama</div>
           <div class="item-price">Rp80.000</div>
-        </div>
+        </a>
 
-        <div class="card-item">
+        <a href="detail.php?id=6" class="card-item">
           <div class="img-wrapper">
             <img src="https://images.unsplash.com/photo-1554568218-0f1715e72254?w=200" alt="Produk 6">
           </div>
           <div class="item-name">nama</div>
           <div class="item-price">Rp40.000</div>
-        </div>
+        </a>
 
       </div>
     </div>
@@ -397,18 +423,18 @@
 </div>
 
 <div class="navbar">
-  <div class="nav-item">
+  <a href="dashboard.php" class="nav-item active">
     <i class="fa-solid fa-house"></i><br>Beranda
-  </div>
-  <div class="nav-item">
+  </a>
+  <a href="order.php" class="nav-item">
     <i class="fa-solid fa-box"></i><br>Order
-  </div>
-  <div class="nav-item">
+  </a>
+  <a href="keranjang.php" class="nav-item">
     <i class="fa-solid fa-cart-shopping"></i><br>Keranjang
-  </div>
-  <div class="nav-item">
+  </a>
+  <a href="akun.php" class="nav-item">
     <i class="fa-solid fa-user"></i><br>Akun
-  </div>
+  </a>
 </div>
 
 </body>
