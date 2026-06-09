@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login LokalThrift</title>
+  <title>Daftar LokalThrift</title>
 
   <style>
+
     *{
       margin:0;
       padding:0;
@@ -21,8 +22,8 @@
       height:100vh;
     }
 
-    .login-card{
-      width:320px;
+    .register-card{
+      width:340px;
       background:white;
       padding:40px 25px;
       border-radius:25px;
@@ -37,12 +38,12 @@
       margin-bottom:10px;
     }
 
-    .login-card h2{
+    .register-card h2{
       color:#4da6ff;
       margin-bottom:25px;
     }
 
-    .login-card input{
+    .register-card input{
       width:100%;
       padding:12px;
       margin:10px 0;
@@ -52,15 +53,17 @@
       outline:none;
     }
 
-    .forgot{
-      display:block;
+    .register-card select{
+      width:100%;
+      padding:12px;
       margin:10px 0;
-      font-size:14px;
-      color:gray;
-      text-decoration:none;
+      border:none;
+      border-radius:25px;
+      background:#f3f3f3;
+      outline:none;
     }
 
-    .login-card button{
+    .register-card button{
       width:100%;
       padding:12px;
       border:none;
@@ -69,19 +72,20 @@
       color:white;
       font-size:16px;
       cursor:pointer;
+      margin-top:15px;
       transition:0.3s;
     }
 
-    .login-card button:hover{
+    .register-card button:hover{
       background:#349eff;
     }
 
-    .register{
+    .login-link{
       margin-top:20px;
       font-size:14px;
     }
 
-    .register a{
+    .login-link a{
       color:#349eff;
       text-decoration:none;
       font-weight:bold;
@@ -92,25 +96,37 @@
 
 <body>
 
-<div class="login-card">
+<div class="register-card">
 
   <div class="logo">☁ LokalThrift</div>
 
-  <h2>Login</h2>
+  <h2>Daftar Akun</h2>
 
-  <form action="dashboard.php">
-    <input type="text" placeholder="Email / Username" required>
-    
-    <input type="password" placeholder="Password" required>
+  <form action="daftar.php" method="post">
 
-    <a href="#" class="forgot">Forgot Password?</a>
+    <input name='nama' type="text" placeholder="Nama Lengkap" required>
 
-    <button type="submit">Login</button>
+    <input name='email' type="email" placeholder="Email" required>
+
+    <input name='no_hp' type="text" placeholder="No HP" required>
+
+    <input name='alamat' type="text" placeholder="Alamat" required>
+
+    <input name='password' type="password" placeholder="Password" required>
+
+    <select name='role' required>
+      <option selected disabled>Pilih Role</option>
+      <option>Pembeli</option>
+      <option>Penjual</option>
+    </select>
+
+    <button name='submit' type="submit">Daftar</button>
+
   </form>
 
-  <div class="register">
-    Belum punya akun?
-    <a href="#">Daftar</a>
+  <div class="login-link">
+    Sudah punya akun?
+    <a href="login.php">Login</a>
   </div>
 
 </div>

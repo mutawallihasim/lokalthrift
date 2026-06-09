@@ -1,266 +1,414 @@
+<?php
+// Pastikan tidak ada spasi atau karakter apa pun di atas tag PHP ini
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard LokalThrift</title>
+  <title>Dashboard LokalThrift - Full Screen</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-
     *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
     }
 
-    body{
-      background:#f2f2f2;
-      display:flex;
-      justify-content:center;
+    body {
+      background: #eef5fc; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .dashboard{
-      width:100%;
-      min-height:100vh;
-      background:white;
-      padding:15px;
-      position:relative;
+    .dashboard {
+      width: 100%;
+      max-width: 1400px; 
+      margin: 0 auto;
+      padding: 30px 40px 120px 40px; 
+      flex: 1;
     }
 
     /* HEADER */
-    .header{
-      display:flex;
-      justify-content: center;
-      align-items:center;
-      margin-bottom:20px;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
     }
 
-    .header h2{
-      color:#4da6ff;
-      font-size:35px;
+    .header .title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #9db2c6;
     }
 
-    .notif{
-      font-size:22px;
-      cursor:pointer;
+    .header .notif-btn {
+      font-size: 26px;
+      color: #000;
+      cursor: pointer;
+    }
+
+    /* SEARCH BOX */
+    .search-box {
       position: relative;
-      left: 34%;
+      margin-bottom: 25px;
+      width: 100%;
     }
 
-    /* SEARCH */
-    .search-box input{
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:25px;
-      background:#f3f3f3;
-      outline:none;
-      margin-bottom:20px;
+    .search-box input {
+      width: 100%;
+      padding: 16px 16px 16px 55px;
+      border: 1px solid #d4e3f3;
+      border-radius: 40px;
+      background: white;
+      outline: none;
+      font-size: 16px;
+      color: #333;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #000;
+      font-size: 18px;
     }
 
     /* KATEGORI */
-    .kategori{
-      display:flex;
-      gap:10px;
-      overflow-x:auto;
-      margin-bottom:20px;
+    .kategori {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      margin-bottom: 30px;
+      padding-bottom: 5px;
     }
 
-    .kategori::-webkit-scrollbar{
-      display:none;
+    .kategori::-webkit-scrollbar {
+      display: none;
     }
 
-    .item{
-      min-width:19%;
-      background:#dff3ff;
-      padding:10px;
-      border-radius:20px;
-      text-align:center;
-      font-size:14px;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    .item:hover{
-      background:#4da6ff;
-      color:white;
+    .kategori .item {
+      padding: 12px 35px;
+      background: #a9d4f9;
+      color: #000;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      white-space: nowrap;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     /* BANNER */
-    .banner{
-      background:linear-gradient(to right,#dff3ff,#ffffff);
-      padding:20px;
-      border-radius:20px;
-      margin-bottom:25px;
+    .banner {
+      background: #bce3ff;
+      border-radius: 20px;
+      padding: 30px 50px;
+      margin-bottom: 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .banner p{
-      font-size:14px;
+    .banner-text {
+      max-width: 65%;
     }
 
-    .banner h1{
-      font-size:32px;
-      margin:10px 0;
+    .banner-text .tag {
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #333;
     }
 
-    .banner h2{
-      font-size:22px;
+    .banner-text h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 8px 0;
+      color: #000;
+      line-height: 1.2;
     }
 
-    .banner span{
-      color:#349eff;
-      font-weight:bold;
+    .banner-text p {
+      font-size: 16px;
+      color: #444;
+      margin-bottom: 15px;
     }
 
-    /* PRODUK */
-    .produk-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:15px;
+    .banner-text .btn-belanja {
+      display: inline-block;
+      padding: 10px 24px;
+      background: #2a85ff;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 25px;
+      text-decoration: none;
     }
 
-    .produk-header p{
-      color:#349eff;
-      cursor:pointer;
+    .banner-img-container {
+      position: relative;
+      width: 30%;
+      height: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .produk-container{
-      display:flex;
-      gap:15px;
-      flex-wrap:wrap;
+    .banner-img {
+      max-height: 150px;
+      object-fit: contain;
     }
 
-    .card{
-      width:48%;
-      height: 500px;
-      background:#fafafa;
-      border-radius:15px;
-      padding:10px;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1);
-      transition:0.3s;
+    .badge-sale {
+      position: absolute;
+      right: 10px;
+      bottom: -10px;
+      background: #fff000;
+      color: #000;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 10px;
+      border-radius: 50%;
+      transform: rotate(-15deg);
+      border: 1.5px dashed #000;
+      text-align: center;
+      line-height: 1.1;
     }
 
-    .card:hover{
-      transform:translateY(-5px);
+    /* SECTION PRODUK */
+    .section-container {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 30px;
     }
 
-    .card img{
-      width:100%;
-      height:300px;
-      object-fit:cover;
-      border-radius:10px;
+    .block-produk {
+      flex: 1;
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     }
 
-    .card h4{
-      margin-top:10px;
-      font-size:15px;
+    .block-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 20px;
     }
 
-    .card p{
-      margin-top:5px;
-      color:#555;
+    .grid-produk {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 20px;
     }
 
-    /* NAVBAR */
-    .navbar{
-      position:fixed;
-      bottom:0;
-      width:100%;
-      background:white;
-      display:flex;
-      justify-content:space-around;
-      padding:12px;
-      border-top:1px solid #ddd;
+    .card-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
-    .nav-item{
-      text-align:center;
-      font-size:14px;
-      cursor:pointer;
-      transition:0.3s;
+    .img-wrapper {
+      width: 100%;
+      background: #f7f9fa;
+      border-radius: 16px;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      aspect-ratio: 1 / 1;
     }
 
-    .nav-item:hover{
-      color:#349eff;
+    .card-item img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
 
+    .card-item .item-name {
+      font-size: 14px;
+      color: #333;
+      margin-top: 10px;
+      width: 100%;
+      text-align: left;
+    }
+
+    .card-item .item-price {
+      font-size: 14px;
+      font-weight: bold;
+      color: #000;
+      width: 100%;
+      text-align: left;
+    }
+
+    /* BOTTOM NAVBAR */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 15px 0;
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+      z-index: 999;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #000;
+      cursor: pointer;
+      flex: 1;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 22px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .section-container {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
-
 <body>
 
 <div class="dashboard">
 
-  <!-- HEADER -->
   <div class="header">
-    <h2>☁ LokalThrift</h2>
-    <div class="notif">🔔</div>
+    <div class="title">Selamat Datang</div>
+    <div class="notif-btn"><i class="fa-regular fa-bell"></i></div>
   </div>
 
-  <!-- SEARCH -->
   <div class="search-box">
-    <input type="text" placeholder="Cari produk thrift...">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Cari produk thirft...">
   </div>
 
-  <!-- KATEGORI -->
   <div class="kategori">
     <div class="item">Casual</div>
     <div class="item">Vintage</div>
     <div class="item">Sport</div>
     <div class="item">Denim</div>
-    <div class="item">Outerwear</div>
+    <div class="item">Outwear</div>
   </div>
 
-  <!-- BANNER -->
   <div class="banner">
-    <p>Promo Besar</p>
-    <h1>Spring Sale</h1>
-    <h2>Up to <span>50% OFF</span></h2>
+    <div class="banner-text">
+      <p class="tag">Diskon Spesial</p>
+      <h1>Thrift Favorit Harga Hemat!</h1>
+      <p>Diskon hingga 50% + Gratis Ongkir</p>
+      <a href="#" class="btn-belanja">Belanja Sekarang</a>
+    </div>
+    <div class="banner-img-container">
+      <img class="banner-img" src="https://images.unsplash.com/photo-1540221652346-e5dd6b50f3e7?w=300" alt="Promo">
+      <div class="badge-sale">sale<br>50%<br>off</div>
+    </div>
   </div>
 
-  <!-- PRODUK -->
-  <div class="produk-header">
-    <h3>Categories</h3>
-    <p>More ></p>
-  </div>
+  <div class="section-container">
+    
+    <div class="block-produk">
+      <div class="block-title">Produk Terbaru</div>
+      <div class="grid-produk">
+        
+        <div class="card-item">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200" alt="Produk 1">
+          </div>
+          <div class="item-name">nama</div>
+          <div class="item-price">Rp150.000</div>
+        </div>
 
-  <div class="produk-container">
+        <div class="card-item">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200" alt="Produk 2">
+          </div>
+          <div class="item-name">nama</div>
+          <div class="item-price">Rp75.000</div>
+        </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500" alt="">
-      <h4>Denim Cardigan</h4>
-      <p>Rp 12.000</p>
+        <div class="card-item">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=200" alt="Produk 3">
+          </div>
+          <div class="item-name">nama</div>
+          <div class="item-price">Rp50.000</div>
+        </div>
+
+      </div>
     </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=500" alt="">
-      <h4>Vintage Leather</h4>
-      <p>Rp 253.000</p>
-    </div>
+    <div class="block-produk">
+      <div class="block-title">Rekomendasi</div>
+      <div class="grid-produk">
+        
+        <div class="card-item">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200" alt="Produk 4">
+          </div>
+          <div class="item-name">nama</div>
+          <div class="item-price">Rp120.000</div>
+        </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500" alt="">
-      <h4>Hoodie Oversize</h4>
-      <p>Rp 89.000</p>
-    </div>
+        <div class="card-item">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200" alt="Produk 5">
+          </div>
+          <div class="item-name">nama</div>
+          <div class="item-price">Rp80.000</div>
+        </div>
 
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=500" alt="">
-      <h4>Vintage Jacket</h4>
-      <p>Rp 150.000</p>
+        <div class="card-item">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1554568218-0f1715e72254?w=200" alt="Produk 6">
+          </div>
+          <div class="item-name">nama</div>
+          <div class="item-price">Rp40.000</div>
+        </div>
+
+      </div>
     </div>
 
   </div>
 
 </div>
 
-<!-- NAVBAR -->
 <div class="navbar">
-  <div class="nav-item">🏠<br>Beranda</div>
-  <div class="nav-item">🛒<br>Keranjang</div>
-  <div class="nav-item">👤<br>Akun</div>
+  <div class="nav-item">
+    <i class="fa-solid fa-house"></i><br>Beranda
+  </div>
+  <div class="nav-item">
+    <i class="fa-solid fa-box"></i><br>Order
+  </div>
+  <div class="nav-item">
+    <i class="fa-solid fa-cart-shopping"></i><br>Keranjang
+  </div>
+  <div class="nav-item">
+    <i class="fa-solid fa-user"></i><br>Akun
+  </div>
 </div>
 
 </body>

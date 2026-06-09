@@ -1,168 +1,21 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar LokalThrift</title>
+<?php
+include 'connection.php';
 
-  <?php
+if (isset($_POST['submit'])){
+$nama = $_POST['nama'];
+$email = $_POST['email'];
+$no_hp = $_POST['no_hp'];
+$alamat = $_POST['alamat'];
+$password = $_POST['password'];
+$role = $_POST['role'];
 
-session_start(); 
-require 'connection.php';
+$sql = "INSERT INTO pengguna(nama, email, no_hp, alamat, password, role) 
+            VALUE ('$nama', '$email', '$no_hp', '$alamat', '$password', '$role')";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama_lengkap = $_POST['nama_lengkap'];
-    $email = $_POST['email'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $konfirmasi_password = $_POST['konfirmasi_password'];
-    $role = $_POST['role'];
-
-    if ($password === $konfirmasi_password) {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        
-        $query = "INSERT INTO pengguna (nama_lengkap, email, username, password, role) 
-                  VALUES ('$nama_lengkap', '$email', '$username', '$hashed_password', '$role')";
-        
-        if (mysqli_query($conn, $query)) {
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = $role;
-            echo "<script>alert('Pendaftaran berhasil! Mengalihkan ke Dashboard...'); window.location.href='dashboard.php';</script>";
-            exit;
-        } else {
-            echo "<script>alert('Gagal mendaftar: Pastikan username/email belum digunakan.');</script>";
-        }
-    } else {
-        echo "<script>alert('Error: Konfirmasi password tidak cocok!');</script>";
-    }
+if(mysqli_query($conn, $sql)) {
+    echo "Berhasil Mendaftar";    
+} else {
+    echo "Eror" . mysqli_error($conn);
+}
 }
 ?>
-
-  <style>
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
-    }
-
-    body{
-      background:#f2f2f2;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-    }
-
-    .register-card{
-      width:340px;
-      background:white;
-      padding:40px 25px;
-      border-radius:25px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      text-align:center;
-    }
-
-    .logo{
-      font-size:30px;
-      color:#4da6ff;
-      font-weight:bold;
-      margin-bottom:10px;
-    }
-
-    .register-card h2{
-      color:#4da6ff;
-      margin-bottom:25px;
-    }
-
-    .register-card input{
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border:none;
-      border-radius:25px;
-      background:#f3f3f3;
-      outline:none;
-    }
-
-    .register-card select{
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border:none;
-      border-radius:25px;
-      background:#f3f3f3;
-      outline:none;
-    }
-
-    .register-card button{
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:25px;
-      background:#5bbcff;
-      color:white;
-      font-size:16px;
-      cursor:pointer;
-      margin-top:15px;
-      transition:0.3s;
-    }
-
-    .register-card button:hover{
-      background:#349eff;
-    }
-
-    .login-link{
-      margin-top:20px;
-      font-size:14px;
-    }
-
-    .login-link a{
-      color:#349eff;
-      text-decoration:none;
-      font-weight:bold;
-    }
-
-  </style>
-</head>
-
-<body>
-
-<div class="register-card">
-
-  <div class="logo">☁ LokalThrift</div>
-
-  <h2>Daftar Akun</h2>
-
-  <form action="login.php">
-
-    <input type="text" placeholder="Nama Lengkap" required>
-
-    <input type="email" placeholder="Email" required>
-
-    <input type="text" placeholder="Username" required>
-
-    <input type="password" placeholder="Password" required>
-
-    <input type="password" placeholder="Konfirmasi Password" required>
-
-    <select required>
-      <option value="">Pilih Role</option>
-      <option>Pembeli</option>
-      <option>Penjual</option>
-    </select>
-
-    <button type="submit">Daftar</button>
-
-  </form>
-
-  <div class="login-link">
-    Sudah punya akun?
-    <a href="login.php">Login</a>
-  </div>
-
-</div>
-
-</body>
-</html>

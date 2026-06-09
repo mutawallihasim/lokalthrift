@@ -9,9 +9,7 @@ $conn = new mysqli($server, $username, $password, $db);
 if ($conn->connect_error) {
     die("Koneksi Gagal". $conn->connect_error);
 } else {
-    echo "";
-    //header("Location: dashboard.php");
-    //exit();
+    echo "Koneksi Berhasil";
 }
 
 ?>
