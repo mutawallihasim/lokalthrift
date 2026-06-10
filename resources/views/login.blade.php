@@ -1,48 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><?php
-session_start();
-
-// Jika sudah login, redirect
-if (isset($_SESSION['id_pengguna'])) {
-    header("location: dashboard.php");
-    exit;
-}
-
-$error = $success = '';
-
-// Notifikasi dari register
-if (isset($_GET['success']) && $_GET['success'] == 1) {
-    $success = 'Akun berhasil dibuat! Silakan login.';
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $identifier = trim($_POST['identifier'] ?? '');
-    $password   = $_POST['password']        ?? '';
-
-    if (!$identifier || !$password) {
-        $error = 'Email dan password harus diisi.';
-    } elseif (strlen($password) < 8) {
-        $error = 'Password minimal 8 karakter.';
-    } else {
-        $sql    = "SELECT * FROM pengguna WHERE email='$identifier' LIMIT 1";
-        $result = mysqli_query($conn, $sql);
-        $user   = mysqli_fetch_assoc($result);
-
-        if ($user && password_verify($password, $user['password'])) {
-            // Simpan session
-            $_SESSION['id_pengguna'] = $user['id_pengguna'];
-            $_SESSION['nama']        = $user['nama'];
-            $_SESSION['email']       = $user['email'];
-            $_SESSION['role']        = $user['role'];
-            header("location: dashboard.php");
-            exit;
-        } else {
-            $error = 'Email atau password salah.';
-        }
-    }
-}
-?>
+<head>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -501,11 +459,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h1 class="card-title" style="margin-top:2px;">Selamat Datang Kembali</h1>
                 <p class="card-sub" style="margin-bottom:0;">Masuk untuk melanjutkan perjalanan thrift-mu.</p>
             </div>
+            
+            @if ($errors->any())
+                <div class="alert alert-error">
+                    <ul style="margin:0;padding-left:18px;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <?php if ($error):   ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-            <?php if ($success): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
-
-            <form method="POST">
+            <form method="POST" action="{{ route('login.process') }}">
+            @csrf
                 <div class="field">
                     <label>Email</label>
                     <div class="input-wrap">
@@ -513,7 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="2" y="4" width="20" height="16" rx="3" />
                             <path d="m2 7 10 7 10-7" />
                         </svg>
-                        <input type="text" name="identifier" placeholder="masukkan email" value="<?= htmlspecialchars($_POST['identifier'] ?? '') ?>">
+                        <input type="email" name="email" placeholder="Masukkan email"value="{{ old('email') }}">
                     </div>
                 </div>
 
@@ -599,6 +565,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setTimeout(() => location.href = href, 400);
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+    <script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: 'Registrasi berhasil, silakan login!',
+        confirmButtonText: 'OK'
+    });
+    </script>
+    @endif
+   
 </body>
 
 </body>
