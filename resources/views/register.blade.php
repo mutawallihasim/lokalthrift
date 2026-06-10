@@ -1,13 +1,4 @@
 <?php
-session_start();
-include 'connection.php';
-
-// Jika sudah login, redirect
-if (isset($_SESSION['id_pengguna'])) {
-    header("location: dashboard.php");
-    exit;
-}
-
 $error = $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -638,10 +629,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="card-sub" style="margin-bottom:0;">Gabung dan temukan thrift item terbaik<br>di sekitarmu.</p>
             </div>
 
-            <?php if ($error):   ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-            <?php if ($success): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
+            @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+            @endif
 
-            <form method="POST">
+            <form method="POST" action="{{ route('register.store') }}">
+                @csrf
+                @if ($errors->any())
+                    <div style="background:#fee; padding:10px; border-radius:8px; margin-bottom:15px;">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <!-- Nama -->
                 <div class="field">
                     <label>Nama Lengkap</label>
@@ -650,7 +654,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <circle cx="12" cy="8" r="4" />
                             <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                         </svg>
-                        <input type="text" name="nama" placeholder="masukkan nama lengkap" value="<?= htmlspecialchars($_POST['nama'] ?? '') ?>">
+                        <input type="text" name="nama" placeholder="masukkan nama lengkap" value="{{ old('nama') }}">
                     </div>
                 </div>
 
@@ -662,7 +666,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="2" y="4" width="20" height="16" rx="3" />
                             <path d="m2 7 10 7 10-7" />
                         </svg>
-                        <input type="email" name="email" placeholder="contoh@gmail.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                        <input type="email" name="email" placeholder="contoh@gmail.com" value="{{ old('email') }}">
                     </div>
                 </div>
 
@@ -673,14 +677,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.08 2h3a2 2 0 0 1 2 1.72c.13 1 .37 1.97.71 2.9a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.18-1.18a2 2 0 0 1 2.11-.45c.93.34 1.9.58 2.9.71A2 2 0 0 1 22 16.92z" />
                         </svg>
-                        <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" value="<?= htmlspecialchars($_POST['no_hp'] ?? '') ?>">
+                        <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" value="{{ old('no_hp') }}">
                     </div>
                 </div>
 
                 <!-- Alamat -->
                 <div class="field">
                     <label>Alamat</label>
-                    <textarea class="form-textarea" name="alamat" placeholder="masukkan alamat lengkap"><?= htmlspecialchars($_POST['alamat'] ?? '') ?></textarea>
+                    <textarea class="form-textarea" name="alamat" placeholder="Masukkan alamat lengkap">{{ old('alamat') }}</textarea>
                 </div>
 
                 <!-- Password -->
@@ -736,7 +740,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="3" y="11" width="18" height="11" rx="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
-                        <input type="password" id="pw2" name="confirm_password" placeholder="ulangi password">
+                        <input type="password" id="pw2" name="password_confirmation" placeholder="ulangi password" required>
                         <button type="button" class="toggle-pw" onclick="togglePw('pw2','eye2')">
                             <svg id="eye2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -752,10 +756,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <button type="submit" class="btn-primary">Daftar</button>
-            </form>
+            </form> 
 
             <div class="switch-link">
-                Sudah punya akun? <a href="login.php" id="toLogin">Login di sini</a>
+                Sudah punya akun? <a href="/login" id="toLogin">Login di sini</a>
             </div>
         </div>
 
@@ -827,12 +831,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 label.textContent = '✅ Sangat Kuat';
             }
         }
-        document.getElementById('toLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            const href = this.href;
-            document.getElementById('page').classList.add('page-leave-left');
-            setTimeout(() => location.href = href, 400);
-        });
+        ;
     </script>
 </body>
 
