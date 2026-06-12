@@ -1,20 +1,13 @@
-<<<<<<< HEAD
-<?php
-// Pastikan tidak ada spasi atau karakter apa pun di atas tag PHP ini
-?>
-=======
->>>>>>> e28094c53a4a97db10a7b29eae5e23a3831ca819
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-  <title>Dashboard LokalThrift - Full Screen</title>
+  <title>Katalog Produk - LokalThrift</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    *{
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -22,678 +15,440 @@
     }
 
     body {
-      background: #eef5fc; 
+      background: #f4f8fc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* CONTAINER UTAMA WEBSITE */
+    .app-container {
+      width: 100%;
+      max-width: 1400px;
+      background: white;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
     }
 
-    .dashboard {
-      width: 100%;
-      max-width: 1400px; 
-      margin: 0 auto;
-      padding: 30px 40px 120px 40px; 
-      flex: 1;
-    }
-
-    /* HEADER */
-    .header {
+    /* TOP NAVIGATION BAR */
+    .top-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      padding: 20px 30px;
+      border-bottom: 1px solid #eef3f8;
     }
 
-    .header .title {
-      font-size: 24px;
-      font-weight: bold;
-      color: #9db2c6;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
     }
 
-    .header .notif-btn {
-      font-size: 26px;
-      color: #000;
-      cursor: pointer;
+    .brand i {
+      font-size: 28px;
+      color: #2a85ff;
     }
 
-    /* SEARCH BOX */
-    .search-box {
+    .brand span {
+      font-size: 22px;
+      font-weight: 800;
+      color: #2a85ff;
+    }
+
+    .search-container {
       position: relative;
-      margin-bottom: 25px;
-      width: 100%;
+      width: 50%;
     }
 
-    .search-box input {
+    .search-container input {
       width: 100%;
-      padding: 16px 16px 16px 55px;
-      border: 1px solid #d4e3f3;
-      border-radius: 40px;
-      background: white;
+      padding: 12px 20px 12px 45px;
+      border: 1px solid #e2edf7;
+      border-radius: 30px;
+      background: #f8fbfe;
       outline: none;
-      font-size: 16px;
-      color: #333;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      font-size: 14px;
     }
 
-    .search-box i {
+    .search-container i {
       position: absolute;
-      left: 22px;
+      left: 18px;
       top: 50%;
       transform: translateY(-50%);
-      color: #000;
-      font-size: 18px;
+      color: #8fa0b5;
     }
 
-    /* KATEGORI */
-    .kategori {
+    .nav-actions {
       display: flex;
-      gap: 15px;
-      overflow-x: auto;
-      margin-bottom: 30px;
-      padding-bottom: 5px;
+      align-items: center;
+      gap: 20px;
     }
 
-    .kategori::-webkit-scrollbar {
-      display: none;
+    .nav-actions a {
+      color: #556980;
+      font-size: 20px;
+      text-decoration: none;
+      transition: color 0.2s;
     }
 
-    .kategori .item {
-      padding: 12px 35px;
-      background: #a9d4f9;
-      color: #000;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: bold;
-      white-space: nowrap;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    .nav-actions a:hover {
+      color: #2a85ff;
+    }
+
+    /* LAYOUT UTAMA (SIDEBAR KIRI & KONTEN KANAN) */
+    .main-layout {
+      display: flex;
+      flex: 1;
+    }
+
+    /* SIDEBAR KIRI */
+    .sidebar {
+      width: 260px;
+      padding: 30px 25px;
+      border-right: 1px solid #eef3f8;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      background: white;
+    }
+
+    .sidebar-section h3 {
+      font-size: 14px;
+      color: #7d8c9e;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: #556980;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 12px;
       transition: all 0.2s;
     }
 
-    .kategori .item:hover {
-      background: #2a85ff;
-      color: white;
+    .cat-item:hover, .cat-item.active {
+      background: #eef5fc;
+      color: #2a85ff;
     }
 
-    /* BANNER */
+    .cat-item i {
+      font-size: 16px;
+      width: 20px;
+    }
+
+    /* KONTEN KANAN */
+    .content-area {
+      flex: 1;
+      padding: 30px;
+    }
+
+    /* BANNER SPECIAL TODAY */
     .banner {
-      background: #bce3ff;
+      background: #d4ecff;
       border-radius: 20px;
-      padding: 30px 50px;
+      padding: 35px 50px;
       margin-bottom: 35px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
-      overflow: hidden;
+      transition: all 0.3s ease-in-out;
     }
 
-    .banner-text {
-      max-width: 65%;
-    }
-
-    .banner-text .tag {
-      font-size: 14px;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: #333;
+    .banner-text h2 {
+      font-size: 18px;
+      color: #2a85ff;
+      margin-bottom: 8px;
     }
 
     .banner-text h1 {
       font-size: 32px;
       font-weight: 800;
-      margin: 8px 0;
-      color: #000;
-      line-height: 1.2;
-    }
-
-    .banner-text p {
-      font-size: 16px;
-      color: #444;
-      margin-bottom: 15px;
-    }
-
-    .banner-text .btn-belanja {
-      display: inline-block;
-      padding: 10px 24px;
-      background: #2a85ff;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 25px;
-      text-decoration: none;
-    }
-
-    .banner-img-container {
-      position: relative;
-      width: 30%;
-      height: 140px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .banner-img {
-      max-height: 150px;
-      object-fit: contain;
-    }
-
-    .badge-sale {
-      position: absolute;
-      right: 10px;
-      bottom: -10px;
-      background: #fff000;
-      color: #000;
-      font-size: 12px;
-      font-weight: 900;
-      padding: 10px;
-      border-radius: 50%;
-      transform: rotate(-15deg);
-      border: 1.5px dashed #000;
-      text-align: center;
-      line-height: 1.1;
-    }
-
-    /* SECTION PRODUK */
-    .section-container {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 30px;
-    }
-
-    .block-produk {
-      flex: 1;
-      background: white;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-    }
-
-    .block-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
+      color: #0d1c2e;
       margin-bottom: 20px;
     }
 
-    .grid-produk {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); 
-      gap: 20px;
+    .btn-blue {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #2a85ff;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 12px;
+      text-decoration: none;
     }
 
-    /* KARTU PRODUK SEBAGAI LINK */
-    .card-item {
+    .banner-img-wrapper {
+      width: 40%;
+      height: 180px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .banner-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: bold;
+      color: #0d1c2e;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      text-decoration: none; 
-      color: inherit; 
-      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
       transition: transform 0.2s;
     }
 
-    .card-item:hover {
-      transform: translateY(-5px);
+    .product-card:hover {
+      transform: translateY(-4px);
     }
 
-    .img-wrapper {
+    .product-img-wrapper {
       width: 100%;
-      background: #f7f9fa;
+      aspect-ratio: 1 / 1;
+      background: #f8fbfe;
       border-radius: 16px;
-      padding: 0; /* Diubah jadi 0 agar gambar memenuhi kotak abu-abu */
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Modifikasi z-index wishlist agar tidak mengganggu klik kartu */
+    .wishlist-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      background: white;
+      border: none;
+      border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      aspect-ratio: 1 / 1;
-      overflow: hidden; /* Memastikan sudut gambar terpotong rapi */
-    }
-
-    /* MEMBUAT UKURAN GAMBAR RATA DAN KONSISTEN */
-    .card-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Gambar dipotong otomatis secara proporsional agar tidak gepeng */
-    }
-
-    .card-item .item-name {
-      font-size: 14px;
-      color: #333;
-      margin-top: 10px;
-      width: 100%;
-      text-align: left;
-    }
-
-    .card-item .item-price {
-      font-size: 14px;
-      font-weight: bold;
-      color: #000;
-      width: 100%;
-      text-align: left;
-    }
-
-    /* BOTTOM NAVBAR */
-    .navbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 15px 0;
-      border-top-left-radius: 25px;
-      border-top-right-radius: 25px;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-      z-index: 999;
-    }
-
-    .nav-item {
-      text-align: center;
-      font-size: 14px;
-      font-weight: bold;
-      color: #000; 
-      text-decoration: none; 
+      color: #8fa0b5;
+      z-index: 10; 
       cursor: pointer;
-      flex: 1;
-      transition: color 0.2s;
     }
 
-    .nav-item i {
-      font-size: 22px;
-      margin-bottom: 6px;
-      display: inline-block;
+    .product-info {
+      padding: 12px 5px;
     }
 
-    .nav-item:hover {
+    .product-title {
+      font-size: 15px;
+      color: #556980;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      font-size: 16px;
+      font-weight: bold;
       color: #2a85ff;
     }
 
-    .nav-item.active {
-      color: #000;
-    }
-
-    @media (max-width: 768px) {
-      .section-container {
-        flex-direction: column;
-      }
+    /* NOTIFIKASI JIKA PRODUK TIDAK DITEMUKAN */
+    .no-results {
+      grid-column: span 3;
+      text-align: center;
+      padding: 40px;
+      color: #7d8c9e;
+      font-size: 16px;
+      display: none;
     }
   </style>
 </head>
-=======
-  <title>Dashboard LokalThrift</title>
-
-  <style>
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
-    }
-
-    body{
-      background:#f2f2f2;
-      display:flex;
-      justify-content:center;
-    }
-
-    .dashboard{
-      width:100%;
-      min-height:100vh;
-      background:white;
-      padding:15px;
-      position:relative;
-    }
-
-    /* HEADER */
-    .header{
-      display:flex;
-      justify-content: center;
-      align-items:center;
-      margin-bottom:20px;
-    }
-
-    .header h2{
-      color:#4da6ff;
-      font-size:35px;
-    }
-
-    .notif{
-      font-size:22px;
-      cursor:pointer;
-      position: relative;
-      left: 34%;
-    }
-
-    /* SEARCH */
-    .search-box input{
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:25px;
-      background:#f3f3f3;
-      outline:none;
-      margin-bottom:20px;
-    }
-
-    /* KATEGORI */
-    .kategori{
-      display:flex;
-      gap:10px;
-      overflow-x:auto;
-      margin-bottom:20px;
-    }
-
-    .kategori::-webkit-scrollbar{
-      display:none;
-    }
-
-    .item{
-      min-width:19%;
-      background:#dff3ff;
-      padding:10px;
-      border-radius:20px;
-      text-align:center;
-      font-size:14px;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    .item:hover{
-      background:#4da6ff;
-      color:white;
-    }
-
-    /* BANNER */
-    .banner{
-      background:linear-gradient(to right,#dff3ff,#ffffff);
-      padding:20px;
-      border-radius:20px;
-      margin-bottom:25px;
-    }
-
-    .banner p{
-      font-size:14px;
-    }
-
-    .banner h1{
-      font-size:32px;
-      margin:10px 0;
-    }
-
-    .banner h2{
-      font-size:22px;
-    }
-
-    .banner span{
-      color:#349eff;
-      font-weight:bold;
-    }
-
-    /* PRODUK */
-    .produk-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:15px;
-    }
-
-    .produk-header p{
-      color:#349eff;
-      cursor:pointer;
-    }
-
-    .produk-container{
-      display:flex;
-      gap:15px;
-      flex-wrap:wrap;
-    }
-
-    .card{
-      width:48%;
-      height: 500px;
-      background:#fafafa;
-      border-radius:15px;
-      padding:10px;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1);
-      transition:0.3s;
-    }
-
-    .card:hover{
-      transform:translateY(-5px);
-    }
-
-    .card img{
-      width:100%;
-      height:300px;
-      object-fit:cover;
-      border-radius:10px;
-    }
-
-    .card h4{
-      margin-top:10px;
-      font-size:15px;
-    }
-
-    .card p{
-      margin-top:5px;
-      color:#555;
-    }
-
-    /* NAVBAR */
-    .navbar{
-      position:fixed;
-      bottom:0;
-      width:100%;
-      background:white;
-      display:flex;
-      justify-content:space-around;
-      padding:12px;
-      border-top:1px solid #ddd;
-    }
-
-    .nav-item{
-      text-align:center;
-      font-size:14px;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    .nav-item:hover{
-      color:#349eff;
-    }
-
-  </style>
-</head>
-
->>>>>>> e28094c53a4a97db10a7b29eae5e23a3831ca819
 <body>
 
-<div class="dashboard">
+<div class="app-container">
 
-<<<<<<< HEAD
-  <div class="header">
-    <div class="title">Selamat Datang di LokalThrift</div>
-    <div class="notif-btn"><i class="fa-regular fa-bell"></i></div>
-  </div>
+  <div class="top-nav">
+    <a href="/" class="brand">
+      <i class="fa-solid fa-cloud-bolt"></i>
+      <span>LokalThrift</span>
+    </a>
 
-  <div class="search-box">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Cari produk thirft...">
-  </div>
-
-=======
-  <!-- HEADER -->
-  <div class="header">
-    <h2>☁ LokalThrift</h2>
-    <div class="notif">🔔</div>
-  </div>
-
-  <!-- SEARCH -->
-  <div class="search-box">
-    <input type="text" placeholder="Cari produk thrift...">
-  </div>
-
-  <!-- KATEGORI -->
->>>>>>> e28094c53a4a97db10a7b29eae5e23a3831ca819
-  <div class="kategori">
-    <div class="item">Casual</div>
-    <div class="item">Vintage</div>
-    <div class="item">Sport</div>
-    <div class="item">Denim</div>
-<<<<<<< HEAD
-    <div class="item">Outwear</div>
-  </div>
-
-  <div class="banner">
-    <div class="banner-text">
-      <p class="tag">Diskon Spesial</p>
-      <h1>Thrift Favorit Harga Hemat!</h1>
-      <p>Diskon hingga 50% + Gratis Ongkir</p>
-      <a href="#" class="btn-belanja">Belanja Sekarang</a>
+    <div class="search-container">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="search-input" placeholder="Cari barang thrift favoritmu..." onkeyup="cariProduk()">
     </div>
-    <div class="banner-img-container">
-      <img class="banner-img" src="https://images.unsplash.com/photo-1540221652346-e5dd6b50f3e7?w=300" alt="Promo">
-      <div class="badge-sale">sale<br>50%<br>off</div>
+
+    <div class="nav-actions">
+      <a href="/keranjang" title="Keranjang Belanja"><i class="fa-solid fa-cart-shopping"></i></a>
+      <a href="/akun" title="Profil Akun"><i class="fa-regular fa-user"></i></a>
     </div>
   </div>
 
-  <div class="section-container">
+  <div class="main-layout">
     
-    <div class="block-produk">
-      <div class="block-title">Produk Terbaru</div>
-      <div class="grid-produk">
-        
-        <a href="detail.php?id=1" class="card-item">
-          <div class="img-wrapper">
-            <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200" alt="Produk 1">
-          </div>
-          <div class="item-name">nama</div>
-          <div class="item-price">Rp150.000</div>
-        </a>
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <h3>Kategori</h3>
+        <div class="cat-list">
+          <a href="#" class="cat-item active"><i class="fa-solid fa-border-all"></i> Semua</a>
+          <a href="#" class="cat-item"><i class="fa-solid fa-shirt"></i> Atasan</a>
+          <a href="#" class="cat-item"><i class="fa-solid fa-socks"></i> Bawahan</a>
+          <a href="#" class="cat-item"><i class="fa-solid fa-user-tie"></i> Outer</a>
+          <a href="#" class="cat-item"><i class="fa-solid fa-person-dress"></i> Dress</a>
+        </div>
+      </div>
 
-        <a href="detail.php?id=2" class="card-item">
-          <div class="img-wrapper">
-            <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200" alt="Produk 2">
-          </div>
-          <div class="item-name">nama</div>
-          <div class="item-price">Rp75.000</div>
-        </a>
-
-        <a href="detail.php?id=3" class="card-item">
-          <div class="img-wrapper">
-            <img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?w=200" alt="Produk 3">
-          </div>
-          <div class="item-name">nama</div>
-          <div class="item-price">Rp50.000</div>
-        </a>
-
+      <div class="sidebar-section">
+        <h3>Fitur Toko</h3>
+        <div class="cat-list">
+          <a href="/penjual" class="cat-item"><i class="fa-solid fa-store"></i> Dashboard Toko</a>
+          <a href="#" class="cat-item"><i class="fa-solid fa-boxes-stacked"></i> Kelola Produk</a>
+          <a href="#" class="cat-item"><i class="fa-solid fa-receipt"></i> Riwayat Transaksi</a>
+        </div>
       </div>
     </div>
 
-    <div class="block-produk">
-      <div class="block-title">Rekomendasi</div>
-      <div class="grid-produk">
+    <div class="content-area">
+      
+      <div class="banner" id="promo-banner">
+        <div class="banner-text">
+          <h2>Special Today 💙</h2>
+          <h1>Diskon hingga 50%</h1>
+          <a href="#" class="btn-blue">Belanja Sekarang</a>
+        </div>
+        <div class="banner-img-wrapper">
+          <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500" alt="Special Today Fashion">
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Semua Produk</h2>
+      </div>
+
+      <div class="products-grid" id="products-container">
         
-        <a href="detail.php?id=4" class="card-item">
-          <div class="img-wrapper">
-            <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200" alt="Produk 4">
+        <div class="no-results" id="no-results-message">
+          <i class="fa-regular fa-folder-open" style="font-size: 30px; margin-bottom: 10px; display:block;"></i>
+          Produk yang kamu cari tidak ditemukan.
+        </div>
+
+        <a href="/detail?id=1" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=300" alt="Vintage Denim Jacket">
+            <button class="wishlist-btn" onclick="event.preventDefault();"><i class="fa-regular fa-heart"></i></button>
           </div>
-          <div class="item-name">nama</div>
-          <div class="item-price">Rp120.000</div>
+          <div class="product-info">
+            <div class="product-title">Vintage Denim Jacket</div>
+            <div class="product-price">Rp 125.000</div>
+          </div>
         </a>
 
-        <a href="detail.php?id=5" class="card-item">
-          <div class="img-wrapper">
-            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200" alt="Produk 5">
+        <a href="/detail?id=2" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300" alt="Crewneck Michigan">
+            <button class="wishlist-btn" onclick="event.preventDefault();"><i class="fa-regular fa-heart"></i></button>
           </div>
-          <div class="item-name">nama</div>
-          <div class="item-price">Rp80.000</div>
+          <div class="product-info">
+            <div class="product-title">Crewneck Michigan State</div>
+            <div class="product-price">Rp 85.000</div>
+          </div>
         </a>
 
-        <a href="detail.php?id=6" class="card-item">
-          <div class="img-wrapper">
-            <img src="https://images.unsplash.com/photo-1554568218-0f1715e72254?w=200" alt="Produk 6">
+        <a href="/detail?id=3" class="product-card">
+          <div class="product-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300" alt="Kemeja Flanel">
+            <button class="wishlist-btn" onclick="event.preventDefault();"><i class="fa-regular fa-heart"></i></button>
           </div>
-          <div class="item-name">nama</div>
-          <div class="item-price">Rp40.000</div>
+          <div class="product-info">
+            <div class="product-title">Kemeja Flanel Casual</div>
+            <div class="product-price">Rp 75.000</div>
+          </div>
         </a>
 
       </div>
-=======
-    <div class="item">Outerwear</div>
-  </div>
 
-  <!-- BANNER -->
-  <div class="banner">
-    <p>Promo Besar</p>
-    <h1>Spring Sale</h1>
-    <h2>Up to <span>50% OFF</span></h2>
-  </div>
-
-  <!-- PRODUK -->
-  <div class="produk-header">
-    <h3>Categories</h3>
-    <p>More ></p>
-  </div>
-
-  <div class="produk-container">
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500" alt="">
-      <h4>Denim Cardigan</h4>
-      <p>Rp 12.000</p>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=500" alt="">
-      <h4>Vintage Leather</h4>
-      <p>Rp 253.000</p>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500" alt="">
-      <h4>Hoodie Oversize</h4>
-      <p>Rp 89.000</p>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=500" alt="">
-      <h4>Vintage Jacket</h4>
-      <p>Rp 150.000</p>
->>>>>>> e28094c53a4a97db10a7b29eae5e23a3831ca819
     </div>
 
   </div>
 
 </div>
 
-<<<<<<< HEAD
-<div class="navbar">
-  <a href="dashboard.php" class="nav-item active">
-    <i class="fa-solid fa-house"></i><br>Beranda
-  </a>
-  <a href="order.php" class="nav-item">
-    <i class="fa-solid fa-box"></i><br>Order
-  </a>
-  <a href="keranjang.php" class="nav-item">
-    <i class="fa-solid fa-cart-shopping"></i><br>Keranjang
-  </a>
-  <a href="akun.php" class="nav-item">
-    <i class="fa-solid fa-user"></i><br>Akun
-  </a>
-=======
-<!-- NAVBAR -->
-<div class="navbar">
-  <div class="nav-item">🏠<br>Beranda</div>
-  <div class="nav-item">🛒<br>Keranjang</div>
-  <div class="nav-item">👤<br>Akun</div>
->>>>>>> e28094c53a4a97db10a7b29eae5e23a3831ca819
-</div>
+<script>
+  function cariProduk() {
+    const kataKunci = document.getElementById('search-input').value.toLowerCase();
+    const kartuProduk = document.querySelectorAll('.product-card');
+    const pesanKosong = document.getElementById('no-results-message');
+    const bannerPromo = document.getElementById('promo-banner');
+    
+    if (kataKunci.trim() !== "") {
+      bannerPromo.style.display = "none";
+    } else {
+      bannerPromo.style.display = "flex";
+    }
+
+    let adaProdukCocok = false;
+
+    kartuProduk.forEach(card => {
+      const namaProduk = card.querySelector('.product-title').innerText.toLowerCase();
+      
+      if (namaProduk.includes(kataKunci)) {
+        card.style.display = "flex";
+        adaProdukCocok = true;
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    if (adaProdukCocok) {
+      pesanKosong.style.display = "none";
+    } else {
+      pesanKosong.style.display = "block";
+    }
+  }
+</script>
 
 </body>
 </html>
