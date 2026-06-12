@@ -1,13 +1,4 @@
 <?php
-session_start();
-include 'connection.php';
-
-// Jika sudah login, redirect
-if (isset($_SESSION['id_pengguna'])) {
-    header("location: dashboard.php");
-    exit;
-}
-
 $error = $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -625,6 +616,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--text-mid);
             font-weight: 600;
         }
+
+        /* === ROLE SELECTOR === */
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .role-option {
+            position: relative;
+        }
+
+        .role-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .role-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 12px;
+            border-radius: var(--radius);
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            transition: border-color .2s, background .2s, box-shadow .2s;
+            min-height: 90px;
+        }
+
+        .role-card:hover {
+            border-color: #93C5FD;
+            background: #F8FBFF;
+        }
+
+        .role-option input:checked ~ .role-card {
+            border-color: var(--primary);
+            background: #EFF6FF;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .role-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--alice);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s;
+        }
+
+        .role-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-light);
+            transition: stroke .2s;
+        }
+
+        .role-option input:checked ~ .role-card .role-icon {
+            background: #DBEAFE;
+        }
+
+        .role-option input:checked ~ .role-card .role-icon svg {
+            stroke: var(--primary);
+        }
+
+        .role-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-mid);
+            transition: color .2s;
+        }
+
+        .role-option input:checked ~ .role-card .role-name {
+            color: var(--primary);
+        }
+
+        .role-desc {
+            font-size: 11.5px;
+            color: var(--text-light);
+            text-align: center;
+            transition: color .2s;
+        }
+
+        .role-option input:checked ~ .role-card .role-desc {
+            color: #60A5FA;
+        }
+
+        .role-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-badge svg {
+            width: 10px;
+            height: 10px;
+            stroke: #fff;
+            stroke-width: 2.5;
+        }
+
+        .role-option input:checked ~ .role-card .role-badge {
+            display: flex;
+        }
     </style>
 </head>
 
@@ -638,10 +745,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="card-sub" style="margin-bottom:0;">Gabung dan temukan thrift item terbaik<br>di sekitarmu.</p>
             </div>
 
-            <?php if ($error):   ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-            <?php if ($success): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
+            @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+            @endif
 
-            <form method="POST">
+            <form method="POST" action="{{ route('register.store') }}">
+                @csrf
+                @if ($errors->any())
+                    <div style="background:#fee; padding:10px; border-radius:8px; margin-bottom:15px;">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <!-- Nama -->
                 <div class="field">
                     <label>Nama Lengkap</label>
@@ -650,7 +771,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <circle cx="12" cy="8" r="4" />
                             <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                         </svg>
-                        <input type="text" name="nama" placeholder="masukkan nama lengkap" value="<?= htmlspecialchars($_POST['nama'] ?? '') ?>">
+                        <input type="text" name="nama" placeholder="masukkan nama lengkap" value="{{ old('nama') }}">
                     </div>
                 </div>
 
@@ -662,7 +783,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="2" y="4" width="20" height="16" rx="3" />
                             <path d="m2 7 10 7 10-7" />
                         </svg>
-                        <input type="email" name="email" placeholder="contoh@gmail.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                        <input type="email" name="email" placeholder="contoh@gmail.com" value="{{ old('email') }}">
                     </div>
                 </div>
 
@@ -673,14 +794,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.08 2h3a2 2 0 0 1 2 1.72c.13 1 .37 1.97.71 2.9a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.18-1.18a2 2 0 0 1 2.11-.45c.93.34 1.9.58 2.9.71A2 2 0 0 1 22 16.92z" />
                         </svg>
-                        <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" value="<?= htmlspecialchars($_POST['no_hp'] ?? '') ?>">
+                        <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" value="{{ old('no_hp') }}">
                     </div>
                 </div>
 
                 <!-- Alamat -->
                 <div class="field">
                     <label>Alamat</label>
-                    <textarea class="form-textarea" name="alamat" placeholder="masukkan alamat lengkap"><?= htmlspecialchars($_POST['alamat'] ?? '') ?></textarea>
+                    <textarea class="form-textarea" name="alamat" placeholder="Masukkan alamat lengkap">{{ old('alamat') }}</textarea>
+                </div>
+
+                <!-- Role -->
+                <div class="field">
+                    <label>Daftar Sebagai</label>
+                    <div class="role-grid">
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="pembeli" {{ old('role') == 'pembeli' ? 'checked' : '' }} required>
+                            <div class="role-card">
+                                <div class="role-badge">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1,6 4,9 11,2"/></svg>
+                                </div>
+                                <div class="role-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                </div>
+                                <span class="role-name">Pembeli</span>
+                                <span class="role-desc">Cari &amp; beli item thrift</span>
+                            </div>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio" name="role" value="penjual" {{ old('role') == 'penjual' ? 'checked' : '' }}>
+                            <div class="role-card">
+                                <div class="role-badge">
+                                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1,6 4,9 11,2"/></svg>
+                                </div>
+                                <div class="role-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                </div>
+                                <span class="role-name">Penjual</span>
+                                <span class="role-desc">Jual koleksi thriftmu</span>
+                            </div>
+                        </label>
+
+                    </div>
                 </div>
 
                 <!-- Password -->
@@ -736,7 +893,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="3" y="11" width="18" height="11" rx="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
-                        <input type="password" id="pw2" name="confirm_password" placeholder="ulangi password">
+                        <input type="password" id="pw2" name="password_confirmation" placeholder="ulangi password" required>
                         <button type="button" class="toggle-pw" onclick="togglePw('pw2','eye2')">
                             <svg id="eye2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -752,10 +909,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <button type="submit" class="btn-primary">Daftar</button>
-            </form>
+            </form> 
 
             <div class="switch-link">
-                Sudah punya akun? <a href="login.php" id="toLogin">Login di sini</a>
+                Sudah punya akun? <a href="/login" id="toLogin">Login di sini</a>
             </div>
         </div>
 
@@ -827,12 +984,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 label.textContent = '✅ Sangat Kuat';
             }
         }
-        document.getElementById('toLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            const href = this.href;
-            document.getElementById('page').classList.add('page-leave-left');
-            setTimeout(() => location.href = href, 400);
-        });
+        ;
     </script>
 </body>
 

@@ -1,49 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><?php
-session_start();
-include 'connection.php';
-
-// Jika sudah login, redirect
-if (isset($_SESSION['id_pengguna'])) {
-    header("location: dashboard.php");
-    exit;
-}
-
-$error = $success = '';
-
-// Notifikasi dari register
-if (isset($_GET['success']) && $_GET['success'] == 1) {
-    $success = 'Akun berhasil dibuat! Silakan login.';
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $identifier = trim($_POST['identifier'] ?? '');
-    $password   = $_POST['password']        ?? '';
-
-    if (!$identifier || !$password) {
-        $error = 'Email dan password harus diisi.';
-    } elseif (strlen($password) < 8) {
-        $error = 'Password minimal 8 karakter.';
-    } else {
-        $sql    = "SELECT * FROM pengguna WHERE email='$identifier' LIMIT 1";
-        $result = mysqli_query($conn, $sql);
-        $user   = mysqli_fetch_assoc($result);
-
-        if ($user && password_verify($password, $user['password'])) {
-            // Simpan session
-            $_SESSION['id_pengguna'] = $user['id_pengguna'];
-            $_SESSION['nama']        = $user['nama'];
-            $_SESSION['email']       = $user['email'];
-            $_SESSION['role']        = $user['role'];
-            header("location: dashboard.php");
-            exit;
-        } else {
-            $error = 'Email atau password salah.';
-        }
-    }
-}
-?>
+<head>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -502,11 +459,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h1 class="card-title" style="margin-top:2px;">Selamat Datang Kembali</h1>
                 <p class="card-sub" style="margin-bottom:0;">Masuk untuk melanjutkan perjalanan thrift-mu.</p>
             </div>
+            
+            @if ($errors->any())
+                <div class="alert alert-error">
+                    <ul style="margin:0;padding-left:18px;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <?php if ($error):   ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-            <?php if ($success): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
-
-            <form method="POST">
+            <form method="POST" action="{{ route('login.process') }}">
+            @csrf
                 <div class="field">
                     <label>Email</label>
                     <div class="input-wrap">
@@ -514,7 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <rect x="2" y="4" width="20" height="16" rx="3" />
                             <path d="m2 7 10 7 10-7" />
                         </svg>
-                        <input type="text" name="identifier" placeholder="masukkan email" value="<?= htmlspecialchars($_POST['identifier'] ?? '') ?>">
+                        <input type="email" name="email" placeholder="Masukkan email"value="{{ old('email') }}">
                     </div>
                 </div>
 
@@ -566,7 +531,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
 
             <div class="switch-link">
-                Belum punya akun? <a href="register.php" id="toRegister">Daftar di sini</a>
+                Belum punya akun? <a href="/register" id="toRegister">Daftar di sini</a>
             </div>
         </div>
 
@@ -600,122 +565,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setTimeout(() => location.href = href, 400);
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+    <script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: 'Registrasi berhasil, silakan login!',
+        confirmButtonText: 'OK'
+    });
+    </script>
+    @endif
+   
 </body>
-
-</html>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login LokalThrift</title>
-
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
-    }
-
-    body{
-      background:#f2f2f2;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-    }
-
-    .login-card{
-      width:320px;
-      background:white;
-      padding:40px 25px;
-      border-radius:25px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      text-align:center;
-    }
-
-    .logo{
-      font-size:30px;
-      color:#4da6ff;
-      font-weight:bold;
-      margin-bottom:10px;
-    }
-
-    .login-card h2{
-      color:#4da6ff;
-      margin-bottom:25px;
-    }
-
-    .login-card input{
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border:none;
-      border-radius:25px;
-      background:#f3f3f3;
-      outline:none;
-    }
-
-    .forgot{
-      display:block;
-      margin:10px 0;
-      font-size:14px;
-      color:gray;
-      text-decoration:none;
-    }
-
-    .login-card button{
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:25px;
-      background:#5bbcff;
-      color:white;
-      font-size:16px;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    .login-card button:hover{
-      background:#349eff;
-    }
-
-    .register{
-      margin-top:20px;
-      font-size:14px;
-    }
-
-    .register a{
-      color:#349eff;
-      text-decoration:none;
-      font-weight:bold;
-    }
-
-  </style>
-</head>
-
-<body>
-
-<div class="login-card">
-
-  <div class="logo">☁ LokalThrift</div>
-
-  <h2>Login</h2>
-
-  <form action="dashboard.html">
-    <input type="text" placeholder="Email / Username" required>
-    
-    <input type="password" placeholder="Password" required>
-
-    <a href="#" class="forgot">Forgot Password?</a>
-
-    <button type="submit">Login</button>
-  </form>
-
-  <div class="register">
-    Belum punya akun?
-    <a href="#">Daftar</a>
-  </div>
-
-</div>
 
 </body>
 </html>

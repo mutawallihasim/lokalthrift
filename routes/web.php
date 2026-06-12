@@ -1,6 +1,9 @@
 <?php
+use App\Http\Controllers\AuthController;
 
-use Illuminate\Support\Facades\Route;
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
 
 // Jalur pintas untuk memaksa menampilkan versi website baru
 
