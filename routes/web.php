@@ -223,3 +223,8 @@ Route::post('/create-order', function (Request $request) {
 
     return response()->json(['status' => 'success', 'invoice' => $invoiceNumber]);
 });
+
+// Tampilan Halaman Profil Akun Saya
+Route::get('/akun', function () {
+    return view('akun'); // Memanggil file akun.blade.php
+});

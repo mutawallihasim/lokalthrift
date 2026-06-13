@@ -17,9 +17,13 @@
     .search-container { position: relative; width: 50%; }
     .search-container input { width: 100%; padding: 12px 20px 12px 45px; border: 1px solid #e2edf7; border-radius: 30px; background: #f8fbfe; outline: none; font-size: 14px; }
     .search-container i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #8fa0b5; }
+    
     .nav-actions { display: flex; align-items: center; gap: 20px; }
-    .nav-actions a { color: #556980; font-size: 20px; text-decoration: none; }
-    .nav-actions a:hover { color: #2a85ff; }
+    .nav-icon-link { color: #556980; font-size: 20px; text-decoration: none; position: relative; }
+    .nav-icon-link:hover { color: #2a85ff; }
+    
+    /* STYLE BUBBLE DINAMIS */
+    .badge-count { position: absolute; top: -7px; right: -8px; background: #2a85ff; color: white; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid white; }
 
     .main-layout { display: flex; flex: 1; }
     .sidebar { width: 260px; padding: 30px 25px; border-right: 1px solid #eef3f8; display: flex; flex-direction: column; gap: 25px; background: white; }
@@ -45,9 +49,7 @@
     .product-img-wrapper { width: 100%; aspect-ratio: 1 / 1; background: #f8fbfe; border-radius: 16px; overflow: hidden; position: relative; }
     .product-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
     
-    /* STYLE WISHLIST / FAVORIT TOMBOL */
     .wishlist-btn { position: absolute; top: 15px; right: 15px; width: 34px; height: 34px; background: white; border: none; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #8fa0b5; z-index: 10; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.2s; }
-    .wishlist-btn:hover { transform: scale(1.05); }
     .wishlist-btn.is-fav i { color: #e53e3e; font-weight: 900; }
 
     .product-info { padding: 12px 5px; }
@@ -66,9 +68,15 @@
       <input type="text" id="search-input" placeholder="Cari barang thrift favoritmu..." onkeyup="cariProduk()">
     </div>
     <div class="nav-actions">
-      <a href="/pesanan" title="Pesanan Saya"><i class="fa-solid fa-receipt"></i></a>
-      <a href="/keranjang" title="Keranjang Belanja"><i class="fa-solid fa-cart-shopping"></i></a>
-      <a href="/akun" title="Profil Akun"><i class="fa-regular fa-user"></i></a>
+      <a href="/pesanan" class="nav-icon-link" title="Pesanan Saya"><i class="fa-solid fa-receipt"></i></a>
+      
+      <!-- BUBBLE SINKRON: Menghitung total jenis item unik di session cart -->
+      <a href="/keranjang" class="nav-icon-link" title="Keranjang Belanja">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="badge-count" id="cart-bubble-count"><?= count(session('cart', [])) ?></span>
+      </a>
+      
+      <a href="/akun" class="nav-icon-link" title="Profil Akun"><i class="fa-regular fa-user"></i></a>
     </div>
   </div>
 
@@ -78,9 +86,7 @@
         <h3>Kategori</h3>
         <div class="cat-list">
           <a href="/web-baru" class="cat-item active"><i class="fa-solid fa-border-all"></i> Semua</a>
-          
           <a href="/favorit" class="cat-item"><i class="fa-solid fa-heart" style="color: #e53e3e;"></i> Favorit</a>
-          
           <a href="#" class="cat-item"><i class="fa-solid fa-shirt"></i> Atasan</a>
           <a href="#" class="cat-item"><i class="fa-solid fa-socks"></i> Bawahan</a>
           <a href="#" class="cat-item"><i class="fa-solid fa-user-tie"></i> Outer</a>
@@ -114,6 +120,7 @@
 
         <?php $favs = session('favorites', []); ?>
 
+        <!-- Produk 1 -->
         <div class="product-card" data-id="1">
           <div class="product-img-wrapper">
             <a href="/detail?id=1"><img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=300" alt="Item"></a>
@@ -127,6 +134,7 @@
           </div>
         </div>
 
+        <!-- Produk 2 -->
         <div class="product-card" data-id="2">
           <div class="product-img-wrapper">
             <a href="/detail?id=2"><img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300" alt="Item"></a>
@@ -140,6 +148,7 @@
           </div>
         </div>
 
+        <!-- Produk 3 -->
         <div class="product-card" data-id="3">
           <div class="product-img-wrapper">
             <a href="/detail?id=3"><img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300" alt="Item"></a>
@@ -159,10 +168,8 @@
 </div>
 
 <script>
-  // FUNGSI DINAMIS: MENAMBAH/MENGHAPUS DARI FAVORIT VIA AJAX FETCH
   function toggleFavorit(id, nama, harga, gambar, element) {
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
     fetch('/toggle-favorit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
@@ -180,7 +187,7 @@
           icon.className = 'fa-regular fa-heart';
         }
       }
-    }).catch(err => console.error(err));
+    });
   }
 
   function cariProduk() {
