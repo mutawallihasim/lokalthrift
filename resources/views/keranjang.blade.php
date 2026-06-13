@@ -1,537 +1,209 @@
+<?php
+$cartItems = session('cart', []);
+$subtotal = 0;
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Keranjang Belanja - LokalThrift</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: #f4f8fc; color: #0d1c2e; min-height: 100vh; }
+    .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 5%; background-color: #ffffff; border-bottom: 1px solid #eef2f7; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #0d1c2e; font-weight: 700; font-size: 20px; }
+    .brand i { color: #2a85ff; }
+    .main-container { width: 90%; max-width: 1200px; margin: 30px auto; }
+    .btn-back { display: inline-flex; align-items: center; gap: 8px; color: #556980; text-decoration: none; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+    .cart-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
+    .cart-wrapper { display: grid; grid-template-columns: 1.6fr 1fr; gap: 30px; align-items: start; }
+    @media (max-width: 900px) { .cart-wrapper { grid-template-columns: 1fr; } }
+    .item-list-container { display: flex; flex-direction: column; gap: 15px; }
+    
+    /* CARD PRODUK */
+    .cart-item { background: white; padding: 20px; border-radius: 16px; border: 1px solid #eef2f7; display: flex; align-items: center; gap: 15px; position: relative; }
+    .item-checkbox { transform: scale(1.3); accent-color: #2a85ff; cursor: pointer; }
+    .item-img { width: 90px; height: 90px; object-fit: cover; border-radius: 12px; }
+    .item-details { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .item-name { font-size: 16px; font-weight: 600; padding-right: 80px; }
+    .item-price { font-size: 16px; font-weight: 700; color: #0d1c2e; }
+    
+    /* CONTROLLER FITUR HAPUS DAN EDIT DI SEBELAH KANAN */
+    .item-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; margin-left: auto; }
+    .btn-delete { background: none; border: none; color: #a0aec0; cursor: pointer; font-size: 16px; transition: 0.2s; }
+    .btn-delete:hover { color: #e53e3e; }
+    
+    /* TOMBOL EDIT KUANTITAS */
+    .quantity-control { display: flex; align-items: center; border: 1px solid #e2edf7; border-radius: 8px; background: #f8fbfe; overflow: hidden; }
+    .btn-qty { width: 28px; height: 28px; background: none; border: none; font-size: 14px; color: #2a85ff; cursor: pointer; font-weight: bold; }
+    .btn-qty:hover { background: #eef5fc; }
+    .qty-value { width: 30px; text-align: center; font-size: 13px; font-weight: 600; color: #0d1c2e; }
 
-    body {
-      background-color: #f4f8fc; /* Latar belakang pale/terang sesuai UI */
-      color: #0d1c2e;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* TOP NAVBAR */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 5%;
-      background-color: #ffffff;
-      border-bottom: 1px solid #eef2f7;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: #0d1c2e;
-      font-weight: 700;
-      font-size: 20px;
-    }
-
-    .brand i {
-      color: #2a85ff;
-    }
-
-    .search-container {
-      position: relative;
-      width: 40%;
-    }
-
-    .search-container input {
-      width: 100%;
-      padding: 10px 16px 10px 40px;
-      border: 1px solid #ccd6e0;
-      border-radius: 9999px;
-      background-color: #f8fbfe;
-      color: #0d1c2e;
-      outline: none;
-      font-size: 14px;
-    }
-
-    .search-container i {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #7d8c9e;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
-
-    .nav-actions a {
-      color: #556980;
-      text-decoration: none;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* MAIN CONTENT WRAPPER */
-    .cart-wrapper {
-      width: 90%;
-      max-width: 1200px;
-      margin: 40px auto;
-      flex: 1;
-    }
-
-    /* STYLE BARU: TOMBOL KEMBALI MINIMALIS */
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #556980;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      transition: color 0.2s;
-    }
-
-    .btn-back:hover {
-      color: #2a85ff;
-    }
-
-    .cart-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      color: #0d1c2e;
-    }
-
-    .cart-container {
-      display: flex;
-      gap: 25px;
-      align-items: flex-start;
-    }
-
-    /* LIST PRODUK (KARTU PUTIH BERSIH SESUAI UI) */
-    .cart-items-list {
-      flex: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .cart-item {
-      display: flex;
-      align-items: center;
-      background-color: #ffffff;
-      border: 1px solid #eef2f7;
-      border-radius: 16px;
-      padding: 20px;
-      position: relative;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-    }
-
-    /* Checkbox & Image */
-    .item-checkbox {
-      width: 20px;
-      height: 20px;
-      accent-color: #2a85ff;
-      cursor: pointer;
-      margin-right: 20px;
-    }
-
-    .item-img-wrapper {
-      width: 100px;
-      height: 100px;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-right: 24px;
-      background-color: #f8fbfe;
-    }
-
-    .item-img-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* Detail Teks Informasi */
-    .item-details {
-      flex: 1;
-    }
-
-    .item-name {
-      font-size: 18px;
-      font-weight: 600;
-      color: #0d1c2e;
-      margin-bottom: 8px;
-    }
-
-    /* Fitur Warna, Ukuran, Kondisi */
-    .item-specs {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 13px;
-    }
-
-    .spec-row {
-      display: flex;
-      gap: 6px;
-    }
-
-    .spec-label {
-      color: #7d8c9e;
-      font-weight: 500;
-    }
-
-    .spec-value {
-      color: #334155;
-    }
-
-    /* Kolom Kanan: Counter & Harga */
-    .item-right-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 16px;
-      margin-right: 40px;
-    }
-
-    .item-price {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0d1c2e;
-    }
-
-    /* Fitur Jumlah Produk (Quantity Counter Biru Cerah) */
-    .quantity-control {
-      display: flex;
-      align-items: center;
-      background-color: #f8fbfe;
-      border: 1px solid #ccd6e0;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .qty-btn {
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: transparent;
-      color: #2a85ff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .qty-btn:hover {
-      background-color: #eef5fc;
-    }
-
-    .qty-input {
-      width: 40px;
-      height: 32px;
-      border: none;
-      border-left: 1px solid #ccd6e0;
-      border-right: 1px solid #ccd6e0;
-      background-color: #ffffff;
-      color: #0d1c2e;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      outline: none;
-    }
-
-    /* Tombol Sampah Hapus */
-    .btn-delete {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: #7d8c9e;
-      font-size: 18px;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .btn-delete:hover {
-      color: #ef4444;
-    }
-
-    /* RINGKASAN BELANJA */
-    .summary-card {
-      flex: 1;
-      max-width: 400px;
-      background: #ffffff;
-      border: 1px solid #eef2f7;
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.01);
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .summary-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #0d1c2e;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      color: #556980;
-    }
-
-    .summary-divider {
-      height: 1px;
-      background: #eef3f8;
-      margin: 5px 0;
-    }
-
-    .total-title {
-      font-size: 15px;
-      font-weight: bold;
-      color: #0d1c2e;
-    }
-
-    .total-price {
-      font-size: 20px;
-      font-weight: 800;
-      color: #0d1c2e;
-    }
-
-    .btn-checkout {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      background-color: #2a85ff;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      box-shadow: 0 4px 12px rgba(42, 133, 255, 0.2);
-      transition: opacity 0.2s;
-    }
-
-    .btn-checkout:hover {
-      opacity: 0.9;
-    }
-
-    @media (max-width: 900px) {
-      .cart-container {
-        flex-direction: column;
-      }
-      .summary-card {
-        max-width: 100%;
-        width: 100%;
-      }
-    }
+    /* SIDEBAR RINGKASAN */
+    .summary-card { background: white; padding: 25px; border-radius: 16px; border: 1px solid #eef2f7; }
+    .summary-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #556980; }
+    .summary-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; border-top: 1px solid #eef2f7; padding-top: 15px; margin-top: 15px; }
+    .btn-checkout { width: 100%; padding: 14px; background: #2a85ff; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+    .empty-state { text-align: center; padding: 50px 20px; background: white; border-radius: 16px; border: 1px solid #eef2f7; color: #7d8c9e; }
+    .empty-state i { font-size: 48px; color: #ccd6e0; margin-bottom: 15px; }
   </style>
 </head>
 <body>
 
   <div class="top-nav">
-    <a href="/web-baru" class="brand">
-      <i class="fa-solid fa-cloud-bolt"></i>
-      <span>LokalThrift</span>
-    </a>
-    <div class="search-container">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" placeholder="Search products...">
-    </div>
-    <div class="nav-actions">
-      <a href="/keranjang"><i class="fa-solid fa-cart-shopping"></i> Keranjang</a>
-      <a href="/akun"><i class="fa-regular fa-user"></i> Akun</a>
-    </div>
+    <a href="/web-baru" class="brand"><i class="fa-solid fa-cloud-bolt"></i> <span>LokalThrift</span></a>
   </div>
 
-  <div class="cart-wrapper">
-    
-    <a href="/web-baru" class="btn-back">
-      <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
+  <div class="main-container">
+    <a href="/web-baru" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+    <h2 class="cart-title">Keranjang Belanja</h2>
 
-    <div class="cart-title">Keranjang Belanja</div>
+    <div class="cart-wrapper">
+      <div class="item-list-container">
+        <?php if(empty($cartItems)): ?>
+          <div class="empty-state">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <p>Keranjang belanjamu kosong. Yuk, tambahkan item pakaian favoritmu!</p>
+          </div>
+        <?php else: ?>
+          <?php foreach($cartItems as $key => $item): 
+              $itemTotal = $item['harga'] * $item['jumlah'];
+              $subtotal += $itemTotal;
+          ?>
+            <div class="cart-item" id="item-row-<?= $key ?>" data-price="<?= $item['harga'] ?>" data-key="<?= $key ?>">
+              <input type="checkbox" class="item-checkbox" checked onclick="hitungUlangTotal()">
+              <img class="item-img" src="<?= $item['gambar'] ?>" alt="Produk">
+              
+              <div class="item-details">
+                <h4 class="item-name"><?= htmlspecialchars($item['nama']) ?></h4>
+                <p style="font-size:13px; color:#7d8c9e;">Ukuran: <strong><?= $item['ukuran'] ?></strong></p>
+                <div class="item-price">Rp <?= number_format($item['harga'], 0, ',', '.') ?></div>
+              </div>
 
-    <div class="cart-container">
-      <div class="cart-items-list">
-        
-        <div class="cart-item" data-price="85000">
-          <input type="checkbox" class="item-checkbox" checked onclick="hitungTotal()">
-          <div class="item-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200" alt="Crewneck">
-          </div>
-          <div class="item-details">
-            <div class="item-name">Crewneck Michigan State Vintage</div>
-            <div class="item-specs">
-              <div class="spec-row"><span class="spec-label">Warna:</span> <span class="spec-value">Green (M)</span></div>
-              <div class="spec-row"><span class="spec-label">Ukuran:</span> <span class="spec-value">M</span></div>
-              <div class="spec-row"><span class="spec-label">Kondisi:</span> <span class="spec-value">Very Good</span></div>
-            </div>
-          </div>
-          <div class="item-right-actions">
-            <div class="item-price">Rp 85.000</div>
-            <div class="quantity-control">
-              <button class="qty-btn" onclick="ubahJumlah(this, -1)">-</button>
-              <input type="text" class="qty-input" value="1" readonly>
-              <button class="qty-btn" onclick="ubahJumlah(this, 1)">+</button>
-            </div>
-          </div>
-          <button class="btn-delete" onclick="hapusItem(this)"><i class="fa-regular fa-trash-can"></i></button>
-        </div>
+              <!-- FITUR BARU: EDIT PESANAN & HAPUS -->
+              <div class="item-actions">
+                <!-- Tombol Hapus (Sampah) -->
+                <button class="btn-delete" onclick="hapusItem('<?= $key ?>')" title="Hapus Produk">
+                  <i class="fa-regular fa-trash-can"></i>
+                </button>
+                
+                <!-- Tombol Edit Jumlah (+ / -) -->
+                <div class="quantity-control">
+                  <button class="btn-qty" onclick="editJumlah('<?= $key ?>', 'decrease')">-</button>
+                  <span class="qty-value" id="qty-val-<?= $key ?>"><?= $item['jumlah'] ?></span>
+                  <button class="btn-qty" onclick="editJumlah('<?= $key ?>', 'increase')">+</button>
+                </div>
+              </div>
 
-        <div class="cart-item" data-price="120000">
-          <input type="checkbox" class="item-checkbox" checked onclick="hitungTotal()">
-          <div class="item-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200" alt="Jacket">
-          </div>
-          <div class="item-details">
-            <div class="item-name">Denim Jacket Vintage Blue</div>
-            <div class="item-specs">
-              <div class="spec-row"><span class="spec-label">Warna:</span> <span class="spec-value">Light Blue</span></div>
-              <div class="spec-row"><span class="spec-label">Ukuran:</span> <span class="spec-value">L</span></div>
-              <div class="spec-row"><span class="spec-label">Kondisi:</span> <span class="spec-value">Like New</span></div>
             </div>
-          </div>
-          <div class="item-right-actions">
-            <div class="item-price">Rp 120.000</div>
-            <div class="quantity-control">
-              <button class="qty-btn" onclick="ubahJumlah(this, -1)">-</button>
-              <input type="text" class="qty-input" value="1" readonly>
-              <button class="qty-btn" onclick="ubahJumlah(this, 1)">+</button>
-            </div>
-          </div>
-          <button class="btn-delete" onclick="hapusItem(this)"><i class="fa-regular fa-trash-can"></i></button>
-        </div>
-
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
 
-      <div class="summary-card">
-        <div class="summary-title">Ringkasan Belanja</div>
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span id="subtotal-display">Rp 205.000</span>
+      <div class="cart-sidebar">
+        <div class="summary-card">
+          <h3 class="summary-title">Ringkasan Belanja</h3>
+          <div class="summary-row"><span>Subtotal</span><span id="subtotal-display">Rp <?= number_format($subtotal, 0, ',', '.') ?></span></div>
+          <div class="summary-row"><span>Pengiriman</span><span style="color: #10B981; font-weight:600;">Gratis</span></div>
+          <div class="summary-total"><span>Total Belanja</span><span id="total-display" style="color:#2a85ff;">Rp <?= number_format($subtotal, 0, ',', '.') ?></span></div>
+          
+          <?php if(!empty($cartItems)): ?>
+            <button class="btn-checkout" onclick="prosesCheckout()">Beli Sekarang</button>
+          <?php endif; ?>
         </div>
-        <div class="summary-row">
-          <span>Pengiriman</span>
-          <span style="color: #7d8c9e;">Gratis</span>
-        </div>
-        <div class="summary-divider"></div>
-        <div class="summary-row" style="align-items: center;">
-          <span class="total-title">Total Belanja</span>
-          <span class="total-price" id="total-display">Rp 205.000</span>
-        </div>
-        <button class="btn-checkout" onclick="checkout()">Beli Sekarang</button>
       </div>
     </div>
   </div>
 
   <script>
-    function ubahJumlah(btn, arah) {
-      const input = btn.parentElement.querySelector('.qty-input');
-      let currentVal = parseInt(input.value);
-      currentVal += arah;
-      
-      if (currentVal < 1) currentVal = 1;
-      input.value = currentVal;
-      
-      const itemRow = btn.closest('.cart-item');
-      const basePrice = parseInt(itemRow.getAttribute('data-price'));
-      const newPrice = basePrice * currentVal;
-      itemRow.querySelector('.item-price').innerText = "Rp " + newPrice.toLocaleString('id-ID');
-      
-      hitungTotal();
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // AJX FITUR 1: EDIT JUMLAH PESANAN
+    function editJumlah(key, action) {
+        fetch('/update-cart-quantity', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+            body: JSON.stringify({ key, action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.removed) {
+                    document.getElementById(`item-row-${key}`).remove();
+                    location.reload(); // Refresh halaman jika item habis (0)
+                } else {
+                    document.getElementById(`qty-val-${key}`).innerText = data.jumlah;
+                    hitungUlangTotal();
+                }
+            }
+        });
     }
 
-    function hapusItem(btn) {
-      if (confirm("Hapus produk ini dari keranjang?")) {
-        btn.closest('.cart-item').remove();
-        hitungTotal();
-      }
-    }
-
-    function hitungTotal() {
-      let total = 0;
-      const items = document.querySelectorAll('.cart-item');
-      
-      items.forEach(item => {
-        const checkbox = item.querySelector('.item-checkbox');
-        if (checkbox.checked) {
-          const qty = parseInt(item.querySelector('.qty-input').value);
-          const price = parseInt(item.getAttribute('data-price'));
-          total += (price * qty);
-        }
-      });
-      
-      document.getElementById('subtotal-display').innerText = "Rp " + total.toLocaleString('id-ID');
-      document.getElementById('total-display').innerText = "Rp " + total.toLocaleString('id-ID');
-    }
-
-    function checkout() {
-    const itemsToCheckout = [];
-    const checkedRows = document.querySelectorAll('.cart-item');
-
-    checkedRows.forEach(row => {
-        const checkbox = row.querySelector('.item-checkbox');
-        if (checkbox.checked) {
-            const nama = row.querySelector('.item-name').innerText;
-            const harga = parseInt(row.getAttribute('data-price'));
-            const gambar = row.querySelector('.item-img-wrapper img').src;
-            
-            // Ekstrak data teks varian warna/ukuran dari dalam dom
-            const specText = row.querySelector('.item-specs').innerText.replace(/\n/g, ', ');
-
-            itemsToCheckout.push({
-                nama: nama,
-                varian: specText,
-                harga: harga,
-                gambar: gambar
+    // AJAX FITUR 2: HAPUS ITEM DARI KERANJANG
+    function hapusItem(key) {
+        if(confirm("Apakah kamu yakin ingin menghapus produk ini dari keranjang?")) {
+            fetch('/remove-from-cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                body: JSON.stringify({ key })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById(`item-row-${key}`).remove();
+                    location.reload();
+                }
             });
         }
-    });
-
-    if (itemsToCheckout.length === 0) {
-        alert("Pilih minimal satu produk yang ingin di-checkout!");
-        return;
     }
 
-    // Kirim array produk pilihan ke session
-    fetch('/set_checkout.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: json.stringify({ items: itemsToCheckout })
-    })
-    .then(() => {
-        window.location.href = "/checkout";
-    });
-}
+    function hitungUlangTotal() {
+        let total = 0;
+        let adaItem = false;
+        document.querySelectorAll('.cart-item').forEach(item => {
+            adaItem = true;
+            if (item.querySelector('.item-checkbox').checked) {
+                const harga = parseInt(item.getAttribute('data-price'));
+                const jumlah = parseInt(item.querySelector('.qty-value').innerText);
+                total += (harga * jumlah);
+            }
+        });
+        document.getElementById('subtotal-display').innerText = "Rp " + total.toLocaleString('id-ID');
+        document.getElementById('total-display').innerText = "Rp " + total.toLocaleString('id-ID');
+    }
 
-    window.onload = function() {
-      hitungTotal();
-    };
+    function prosesCheckout() {
+        const itemsToCheckout = [];
+        document.querySelectorAll('.cart-item').forEach(item => {
+            if (item.querySelector('.item-checkbox').checked) {
+                const qty = item.querySelector('.qty-value').innerText;
+                itemsToCheckout.push({
+                    nama: item.querySelector('.item-name').innerText,
+                    varian: "Size M | Jumlah: " + qty + "x",
+                    harga: parseInt(item.getAttribute('data-price')) * parseInt(qty),
+                    gambar: item.querySelector('.item-img').src
+                });
+            }
+        });
+
+        if (itemsToCheckout.length === 0) {
+            alert("Silakan pilih minimal satu produk di keranjang!");
+            return;
+        }
+
+        fetch('/set-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+            body: JSON.stringify({ items: itemsToCheckout })
+        }).then(res => { if (res.ok) window.location.href = "/checkout"; });
+    }
   </script>
 </body>
 </html>
